@@ -1,147 +1,127 @@
-# Project Big Data 2 - Retail Rocket Event Processing
+# 🛍️ Project Big Data 2 - Retail Rocket Event Processing
 
-Proyek ini mensimulasikan pemrosesan data stream dari event e-commerce Retail Rocket menggunakan Apache Kafka untuk ingestion, Apache Spark untuk pemrosesan batch dan training model, serta API untuk melayani hasil model.
+Proyek ini mensimulasikan pemrosesan data stream dari event e-commerce **Retail Rocket** menggunakan **Apache Kafka** untuk ingestion, **Apache Spark** untuk pemrosesan batch dan training model, serta **API** untuk menyajikan hasil model machine learning.
 
-## Deskripsi Dataset: Retail Rocket E-commerce Events
+---
 
-*   **Sumber:** [Retail Rocket Recommender System Dataset (Kaggle)](https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset)
-*   **File yang Digunakan:** `events.csv`
-*   **Ukuran:** Sekitar 2.7 juta baris (event).
-*   **Deskripsi Konten:** Dataset ini berisi log perilaku pengguna (event) dari sebuah platform e-commerce. Setiap baris merepresentasikan satu aksi yang dilakukan oleh pengunjung.
-*   **Kolom Utama di `events.csv`:**
-    *   `timestamp`: Waktu terjadinya event (dalam format Unix timestamp milliseconds).
-    *   `visitorid`: ID unik untuk setiap pengunjung.
-    *   `event`: Jenis aksi yang dilakukan oleh pengunjung. Nilai tipikal:
-        *   `view`: Pengunjung melihat detail produk.
-        *   `addtocart`: Pengunjung menambahkan produk ke keranjang belanja.
-        *   `transaction`: Pengunjung menyelesaikan pembelian (transaksi).
-    *   `itemid`: ID unik untuk setiap produk/item.
-    *   `transactionid`: ID unik untuk transaksi (hanya ada jika `event` adalah `transaction`, selain itu `null`/kosong).
+## 📦 Dataset: Retail Rocket E-commerce Events
 
-## Tujuan Proyek dengan Dataset Ini
+- **Sumber:** [Retail Rocket Recommender System Dataset (Kaggle)](https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset)  
+- **File yang Digunakan:** `events.csv`  
+- **Ukuran:** ± 2.7 juta baris (event)  
+- **Deskripsi:** Dataset ini berisi log perilaku pengguna dari sebuah platform e-commerce. Setiap baris merepresentasikan satu aksi yang dilakukan oleh pengunjung.
 
-Tujuan utama proyek ini adalah untuk membangun sebuah pipeline data end-to-end yang mampu menangani aliran data event e-commerce secara simulasi, melakukan analisis, dan menghasilkan insight melalui model machine learning. Dengan menggunakan dataset Retail Rocket `events.csv`, proyek ini bertujuan untuk:
+### Kolom Utama di `events.csv`:
+- `timestamp` — Waktu event (Unix timestamp dalam milidetik)  
+- `visitorid` — ID unik pengunjung  
+- `event` — Jenis aksi: `view`, `addtocart`, `transaction`  
+- `itemid` — ID produk  
+- `transactionid` — Hanya ada jika `event = transaction`
 
-1.  **Simulasi Data Stream:** Menggunakan Apache Kafka untuk meng-ingest data event dari `events.csv` seolah-olah data tersebut datang secara real-time (streaming).
-2.  **Pemrosesan Batch:** Menggunakan Apache Spark untuk memproses data event yang telah dikumpulkan dalam batch. Ini mencakup pra-pemrosesan data dan feature engineering.
-3.  **Pelatihan Model Machine Learning (Secara Iteratif):**
-    *   Melatih beberapa model machine learning berdasarkan segmen data yang masuk secara bertahap.
-    *   Contoh potensi model yang bisa dikembangkan (tergantung implementasi tim):
-        *   **Sistem Rekomendasi Produk:** Memberikan rekomendasi item kepada pengunjung berdasarkan histori interaksi mereka.
-        *   **Prediksi Perilaku Pengguna:** Misalnya, memprediksi apakah seorang pengunjung akan melakukan transaksi.
-        *   **Segmentasi Pengguna:** Mengelompokkan pengunjung berdasarkan pola perilaku belanja mereka.
-4.  **Penyediaan Hasil Model melalui API:** Mengekspos model-model yang telah dilatih melalui endpoint API, sehingga hasil prediksi atau rekomendasi dapat diakses oleh pengguna atau sistem lain.
-5.  **Demonstrasi Arsitektur Big Data:** Menunjukkan pemahaman dan implementasi komponen-komponen kunci dalam arsitektur pemrosesan data besar seperti Kafka dan Spark untuk kasus penggunaan data stream dan batch.
+---
 
-Dengan memproses data event ini, kita dapat mengeksplorasi bagaimana pola perilaku pengguna dapat dianalisis untuk meningkatkan pengalaman pengguna, personalisasi, dan pengambilan keputusan bisnis di platform e-commerce.
+## 🎯 Tujuan Proyek
 
-## Bagian 1: Kafka Pipeline - Ingesti Data Event
+Membangun pipeline data end-to-end untuk:
 
-Bagian ini bertanggung jawab untuk membaca data mentah dari file `events.csv`, mengirimkannya ke topic Kafka sebagai simulasi stream, dan kemudian mengonsumsi data tersebut dari Kafka untuk disimpan dalam bentuk file batch CSV yang siap diproses oleh Spark.
+1. **Simulasi Streaming:** Menggunakan Kafka untuk ingest data dari `events.csv` secara real-time.
+2. **Batch Processing:** Menggunakan Spark untuk preprocessing & feature engineering.
+3. **Pelatihan Model ML Iteratif:**  
+   Contoh model yang mungkin dikembangkan:
+   - Sistem Rekomendasi Produk
+   - Prediksi Perilaku Pengguna
+   - Segmentasi Pengguna
+4. **Expose Hasil Model via API:** Untuk sistem downstream.
+5. **Demonstrasi Arsitektur Big Data:** Dengan komponen Kafka + Spark.
 
-**Struktur Direktori Terkait:**
+---
+
+## 🧱 Arsitektur dan Struktur Direktori
+
+### 📂 Struktur Proyek
 ```
 .
 ├── data/
-│   ├── raw/
-│   │   └── events.csv         # Data sumber mentah
-│   └── processed_batches/     # Output dari Kafka Consumer (file batch CSV)
+│   ├── raw/                    # events.csv asli
+│   └── processed_batches/      # Output CSV dari Kafka Consumer
 ├── kafka_pipeline/
-│   ├── docker-compose.yaml    # Konfigurasi Docker untuk Kafka & Zookeeper
-│   ├── producer.py            # Script Kafka Producer
-│   ├── consumer.py            # Script Kafka Consumer
-│   ├── requirements_kafka.txt # Dependensi Python untuk kafka_pipeline
-│   └── venv_kafka/            # Virtual environment (jangan di-commit ke Git)
-└── README.md                  # File ini
+│   ├── docker-compose.yaml     # Setup Kafka + Zookeeper
+│   ├── producer.py             # Kafka Producer
+│   ├── consumer.py             # Kafka Consumer
+│   ├── requirements_kafka.txt  # Dependensi Python
+│   └── venv_kafka/             # Virtual environment (jangan di-commit)
+└── README.md
 ```
 
-### Prasyarat
+---
 
-1.  **Docker Desktop:** Terinstall dan berjalan. (Download: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/))
-2.  **Python:** Versi 3.8 atau lebih tinggi. (Download: [https://www.python.org/](https://www.python.org/))
-3.  **Dataset:** File `events.csv` dari dataset Retail Rocket tersedia di `data/raw/events.csv`.
+## ⚙️ Bagian 1: Kafka Pipeline – Ingesti Data Event
 
-### Langkah-Langkah Menjalankan Kafka Pipeline
+### 🔧 Prasyarat
 
-**1. Setup Lingkungan Kafka dengan Docker:**
+- **Docker Desktop**  
+- **Python ≥ 3.8**  
+- **Dataset** `events.csv` di `data/raw/`
 
-   *   Buka terminal atau Command Prompt (CMD).
-   *   Navigasi ke **root direktori proyek** (`project-bigdata-retailrocket`).
-   *   Jalankan perintah berikut untuk memulai Kafka dan Zookeeper menggunakan Docker Compose:
-     ```bash
-     docker-compose -f kafka_pipeline\docker-compose.yaml up -d
-     ```
-   *   Tunggu beberapa saat hingga kedua container (`zookeeper_guardian` dan `kafka_streamliner`) berjalan. Kamu bisa cek statusnya dengan:
-     ```bash
-     docker-compose -f kafka_pipeline\docker-compose.yaml ps
-     ```
-     Outputnya seharusnya menunjukkan status `Up` untuk kedua service.
+---
 
-**2. Setup Virtual Environment dan Install Dependensi Python:**
+### 🚀 Cara Menjalankan Kafka Pipeline
 
-   *   Buka terminal/CMD baru.
-   *   Navigasi ke direktori `kafka_pipeline`:
-     ```bash
-     cd path\to\your\project-bigdata-retailrocket\kafka_pipeline
-     ```
-   *   Buat virtual environment (jika belum ada):
-     ```bash
-     python -m venv venv_kafka
-     ```
-   *   Aktifkan virtual environment:
-     *   Windows CMD: `venv_kafka\Scripts\activate`
-     *   Git Bash / Linux / macOS: `source venv_kafka/bin/activate`
-     (Prompt terminal akan berubah, diawali dengan `(venv_kafka)`)
-   *   Install dependensi yang dibutuhkan:
-     ```bash
-     pip install -r requirements_kafka.txt
-     ```
-     *(Pastikan file `requirements_kafka.txt` sudah berisi `kafka-python`, `pandas`, dan dependensinya).*
-
-**3. Menjalankan Kafka Consumer:**
-
-   *   Pastikan virtual environment `(venv_kafka)` aktif.
-   *   Di terminal yang sama (atau terminal baru dengan venv aktif di direktori `kafka_pipeline`), jalankan script Consumer:
-     ```bash
-     python consumer.py
-     ```
-   *   Consumer akan mulai berjalan dan menunggu pesan dari topic Kafka (`retail_events_topic`).
-
-**4. Menjalankan Kafka Producer:**
-
-   *   Buka terminal/CMD **BARU**.
-   *   Navigasi ke direktori `kafka_pipeline`:
-     ```bash
-     cd path\to\your\project-bigdata-retailrocket\kafka_pipeline
-     ```
-   *   Aktifkan virtual environment:
-     *   Windows CMD: `venv_kafka\Scripts\activate`
-     *   Git Bash / Linux / macOS: `source venv_kafka/bin/activate`
-   *   Jalankan script Producer:
-     ```bash
-     python producer.py
-     ```
-   *   Producer akan mulai membaca file `data/raw/events.csv` dan mengirimkan setiap baris sebagai pesan ke Kafka. Kamu akan melihat log progres di terminal Producer.
-   *   Di terminal Consumer, kamu akan melihat pesan-pesan diterima dan file-file batch CSV mulai dibuat di direktori `data/processed_batches/`.
-
-**5. Observasi dan Penyelesaian:**
-
-   *   **Producer:** Akan berhenti secara otomatis setelah semua data dari `events.csv` terkirim dan mencetak pesan "Producer: All ... messages sent...".
-   *   **Consumer:** Setelah Producer selesai dan tidak ada pesan baru yang masuk ke topic Kafka selama durasi `consumer_timeout_ms` (default 30-60 detik di script), Consumer akan berhenti secara otomatis, menyimpan batch terakhir (jika ada), dan menutup koneksi. Terminal akan kembali ke prompt biasa.
-   *   Hasil dari proses ini adalah sejumlah file `batch_XXX.csv` di dalam direktori `data/processed_batches/`. File-file ini siap untuk diproses oleh Apache Spark di tahap selanjutnya.
-
-**6. Menghentikan Lingkungan Kafka Docker (Setelah Selesai):**
-
-   *   Jika sudah tidak digunakan lagi, kamu bisa menghentikan dan menghapus container Kafka dan Zookeeper.
-   *   Buka terminal di **root direktori proyek**.
-   *   Jalankan:
-     ```bash
-     docker-compose -f kafka_pipeline\docker-compose.yaml down
-     ```
-
-### Catatan Penting untuk Tahap Selanjutnya (Spark Processing):
-
-*   File-file batch hasil dari Kafka Consumer (`data/processed_batches/*.csv`) adalah input untuk script Apache Spark.
-*   Setiap file batch berisi sekumpulan event (default 10.000 event per file, kecuali file `_final.csv`).
-*   Pastikan Spark dapat membaca format CSV dari file-file ini.
+#### 1. Jalankan Kafka & Zookeeper via Docker
+```bash
+docker-compose -f kafka_pipeline/docker-compose.yaml up -d
 ```
+Cek status:
+```bash
+docker-compose -f kafka_pipeline/docker-compose.yaml ps
+```
+
+#### 2. Siapkan Virtual Environment dan Install Dependensi
+```bash
+cd kafka_pipeline
+python -m venv venv_kafka
+venv_kafka\Scripts\activate
+pip install -r requirements_kafka.txt
+```
+
+#### 3. Jalankan Kafka Consumer
+```bash
+python consumer.py
+```
+
+#### 4. Jalankan Kafka Producer (Terminal Baru)
+```bash
+python producer.py
+```
+Producer akan mengirim event dari `events.csv` secara bertahap ke Kafka.
+
+---
+
+### ✅ Hasil & Observasi
+
+- File hasil batch akan muncul di: `data/processed_batches/`
+- Consumer berhenti otomatis setelah timeout (`consumer_timeout_ms`)
+- Producer berhenti setelah semua pesan terkirim
+- Dokumentasi 
+![image](https://github.com/user-attachments/assets/d370686e-b817-4ec2-90cd-1a6ce9132060)
+
+![image](https://github.com/user-attachments/assets/fb7793a3-0a7a-458b-826d-d41dcefc6a28)
+
+---
+
+### 🛑 Menghentikan Kafka (Opsional)
+```bash
+docker-compose -f kafka_pipeline/docker-compose.yaml down
+```
+
+---
+
+## 🔜 Tahap Selanjutnya: Spark Processing
+
+- File `batch_*.csv` dari `data/processed_batches/` digunakan untuk Spark.
+- Tiap file berisi ±10.000 event (kecuali batch terakhir).
+- Pastikan Spark dapat membaca file CSV ini sebagai input untuk ML pipeline.
+
+---
+
+> 🧠 *Dengan memproses aliran data event ini, kita dapat memahami pola perilaku pengguna untuk meningkatkan pengalaman pengguna, personalisasi, dan pengambilan keputusan bisnis dalam e-commerce.*
