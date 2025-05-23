@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+*.pot
+*. स्वयं
+*.egg-info/
+.cache/
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Direktori virtual environment spesifik proyek
+kafka_pipeline/venv_kafka/
+spark_processor/venv_spark/ # Jika nanti ada venv untuk spark
+api_services/venv_api/    # Jika nanti ada venv untuk api
+
+# File Dataset Mentah (jika sangat besar dan tidak ingin di-commit)
+# Biasanya untuk tugas kuliah, dataset mentah diminta untuk di-commit jika ukurannya wajar.
+# Jika events.csv terlalu besar (misal >100MB), pertimbangkan untuk tidak meng-commitnya
+# atau gunakan Git LFS. Untuk sekarang, kita asumsikan ukurannya masih oke.
+# data/raw/events.csv
+
+# File Batch yang Dihasilkan (Biasanya tidak di-commit karena bisa diregenerasi)
+data/processed_batches/*
+
+# Model yang Dilatih (Jika sangat besar)
+# spark_processor/models/*
+
+# File spesifik OS
+.DS_Store
+Thumbs.db
+
+# File spesifik IDE
+.idea/
+.vscode/
+# Kecuali jika kamu ingin berbagi konfigurasi .vscode tertentu, maka jangan abaikan semuanya.
+# .vscode/settings.json
+# .vscode/launch.json
