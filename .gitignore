@@ -17,8 +17,8 @@ venv.bak/
 
 # Direktori virtual environment spesifik proyek
 kafka_pipeline/venv_kafka/
-spark_processor/venv_spark/ # Jika nanti ada venv untuk spark
-api_services/venv_api/    # Jika nanti ada venv untuk api
+spark_processor/venv_spark/ 
+api_services/venv_api/    
 
 # File Dataset Mentah (jika sangat besar dan tidak ingin di-commit)
 # Biasanya untuk tugas kuliah, dataset mentah diminta untuk di-commit jika ukurannya wajar.
