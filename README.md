@@ -186,6 +186,16 @@ Output: spark_processor/models/user_segmentation_model_v1/
 - Model Tersimpan: Tersimpan dalam format direktori MLlib (metadata/, data/, stages/).
 - Contoh Output Konsol:
 
+![Screenshot 2025-05-24 151523](https://github.com/user-attachments/assets/9d3d17b8-6a7e-4cc4-b154-c014ed139d90)
+  
+![Screenshot 2025-05-24 155450](https://github.com/user-attachments/assets/7812b78a-4b53-48c1-9be9-6c155f4b2bf6)
+
+![Screenshot 2025-05-24 151922](https://github.com/user-attachments/assets/ad3c3226-cf08-4cc9-addd-0ba1c2fa7274)
+
+![Screenshot 2025-05-24 151936](https://github.com/user-attachments/assets/0a23191c-aaca-42e8-8bf3-1e170c6a2fd0)
+
+![Screenshot 2025-05-24 152023](https://github.com/user-attachments/assets/d48da90c-e416-4121-93f8-2e712edbdf80)
+
 ---
 #### 🌐 Bagian 3: API Service
 - Tahapan berikutnya adalah membangun layanan API (mis. Flask atau FastAPI) untuk:
