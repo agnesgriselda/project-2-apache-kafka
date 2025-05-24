@@ -33,15 +33,9 @@ def load_and_merge_batches(spark: SparkSession, base_path: str, start_batch_num:
     ])
 
     for i in range(start_batch_num, end_batch_num + 1):
-        # --- PERUBAHAN UTAMA DI SINI ---
-        # Menggunakan f-string dengan formatting untuk padding nol (3 digit)
-        # Ini akan menghasilkan nama file seperti batch_001.csv, batch_010.csv, batch_100.csv
         file_name = f"{file_prefix}{i:03d}.csv"
         file_path = os.path.join(base_path, file_name)
-        
-        # Anda bisa uncomment print di bawah ini untuk debugging path file
-        # print(f"Attempting to load: {file_path}")
-        
+
         if os.path.exists(file_path):
             try:
                 df_batch = spark.read.csv(file_path, header=True, schema=schema)
