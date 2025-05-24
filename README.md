@@ -115,12 +115,83 @@ docker-compose -f kafka_pipeline/docker-compose.yaml down
 ```
 
 ---
+## ✨ Bagian 2: Spark Processing & Model Training
 
-## 🔜 Tahap Selanjutnya: Spark Processing
+Setelah data event berhasil di-ingest oleh Kafka dan disimpan sebagai file-file batch CSV di `data/processed_batches/`, tahap selanjutnya adalah melakukan pemrosesan data dan pelatihan model machine learning menggunakan Apache Spark (PySpark).
 
-- File `batch_*.csv` dari `data/processed_batches/` digunakan untuk Spark.
-- Tiap file berisi ±10.000 event (kecuali batch terakhir).
-- Pastikan Spark dapat membaca file CSV ini sebagai input untuk ML pipeline.
+### 📂 Struktur Direktori untuk Spark
+```
+├── spark_processor/
+│ ├── train_model.py # Skrip utama Spark untuk training model
+│ ├── models/ # Direktori output untuk model yang sudah dilatih
+│ │ ├── recommender_model_v1/
+│ │ ├── transaction_predictor_model_v1/
+│ │ └── user_segmentation_model_v1/
+│ ├── requirements_spark.txt # File requirements untuk Spark
+│ └── venv_spark/ # Virtual environment 
+└── ... (bagian lain proyek)
+```
+
+### 🔧 Prasyarat untuk Spark
+
+- **Java Development Kit (JDK):** Disarankan versi 17 (minimal 11). Pastikan `JAVA_HOME` sudah diset dan `%JAVA_HOME%\bin` masuk dalam `PATH`.
+- **`winutils.exe` (untuk pengguna Windows):**
+  - Unduh `winutils.exe` sesuai versi mayor Hadoop yang digunakan oleh PySpark.
+  - Buat folder `C:\hadoop\bin` dan simpan `winutils.exe` di dalamnya.
+  - Set `HADOOP_HOME=C:\hadoop` dan tambahkan `%HADOOP_HOME%\bin` ke `PATH`.
+- **Python ≥ 3.8**
+- **File-file Batch Data:** Tersimpan di `data/processed_batches/` dengan nama seperti `batch_001.csv`, `batch_002.csv`, dst.
+
+### 🚀 Cara Menjalankan Spark Training Pipeline
+
+#### 1. Siapkan Virtual Environment dan Install Dependensi
+
+```bash
+cd spark_processor
+python -m venv venv_spark
+venv_spark\Scripts\activate
+pip install -r requirements_spark.txt
+```
+#### 2. Jalankan Skrip Training Model
+```bash
+python train_model.py
+```
+
+#### 🤖 Model Machine Learning yang Dilatih
+Skrip train_model.py akan melatih tiga model berikut:
+
+🔸 Model 1: Recommender (ALS)
+Data: Batch 1–50 (~500.000 event)
+
+Tujuan: Rekomendasi produk berdasarkan interaksi pengguna (view, addtocart, transaction) → rating implisit
+
+Output: spark_processor/models/recommender_model_v1/
+
+🔸 Model 2: Transaction Predictor (Random Forest)
+Data: Batch 51–100 (~500.000 event)
+
+Tujuan: Prediksi apakah pengunjung akan melakukan transaksi
+
+Output: spark_processor/models/transaction_predictor_model_v1/
+
+🔸 Model 3: User Segmentation (KMeans)
+Data: Batch 101–150 (~500.000 event)
+
+Tujuan: Segmentasi pengguna berdasarkan perilaku agregat
+
+Output: spark_processor/models/user_segmentation_model_v1/
+
+#### ✅ Hasil & Observasi Spark Processing
+- Log Konsol: Menampilkan progres batch, jumlah data, tahap pre-processing, dan training.
+- Model Tersimpan: Tersimpan dalam format direktori MLlib (metadata/, data/, stages/).
+- Contoh Output Konsol:
+
+---
+#### 🌐 Bagian 3: API Service
+- Tahapan berikutnya adalah membangun layanan API (mis. Flask atau FastAPI) untuk:
+- Memuat model dari direktori spark_processor/models/
+- Menyediakan endpoint untuk prediksi atau rekomendasi
+- Mengembalikan hasil prediksi dalam format JSON
 
 ---
 
