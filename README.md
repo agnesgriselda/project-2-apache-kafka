@@ -1,3 +1,9 @@
+| Nama                           | NRP        |
+| ------------------------------ | ---------- |
+| Aswalia Novitriasari           | 5027231012 |
+| Agnes Zenobia Griselda Petrina | 5027231034 |
+| Tsaldia Hukma Cita             | 5027231036 |
+
 # 🛍️ Project Big Data 2 - Retail Rocket Event Processing
 
 Proyek ini mensimulasikan pemrosesan data stream dari event e-commerce **Retail Rocket** menggunakan **Apache Kafka** untuk ingestion, **Apache Spark** untuk pemrosesan batch dan training model, serta **API** untuk menyajikan hasil model machine learning.
