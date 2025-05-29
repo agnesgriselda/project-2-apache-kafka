@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pyspark>=3.5.0
+pandas
+numpy
+pydantic
