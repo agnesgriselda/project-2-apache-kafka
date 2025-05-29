@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  api_service:
+    build:
+      context: ../../  # Dari api_docker_setup -> api_services -> project-2-apache-kafka-main (root)
+      dockerfile: api_services/api_docker_setup/Dockerfile.api # Path ke Dockerfile relatif dari konteks root
+    container_name: standalone_api_service_container
+    ports:
+      - "8001:8000"
+    volumes:
+      # Path ke model sekarang relatif terhadap konteks build (root proyek)
+      - ../../spark_processor/models:/opt/spark/models_mounted:ro
+    environment:
+      - PYTHONUNBUFFERED=1
