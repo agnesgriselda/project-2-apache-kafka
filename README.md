@@ -203,7 +203,7 @@ Output: spark_processor/models/user_segmentation_model_v1/
 ![Screenshot 2025-05-24 152023](https://github.com/user-attachments/assets/d48da90c-e416-4121-93f8-2e712edbdf80)
 
 ---
-#### 🌐 Bagian 3: API Service
+## 🌐 Bagian 3: API Service
 - Tahapan berikutnya adalah membangun layanan API (mis. Flask atau FastAPI) untuk:
 - Memuat model dari direktori spark_processor/models/
 - Menyediakan endpoint untuk prediksi atau rekomendasi
